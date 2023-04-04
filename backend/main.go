@@ -19,4 +19,12 @@ func main() {
 		return
 	}
 	fmt.Println("JWT obtained:", jwt)
+
+	// execute the graphql query using the jwt
+	queryResult, err := Internal.ExecuteGraphQLQuery(jwt)
+	if err != nil {
+		fmt.Println("Error executing query:", err)
+		return
+	}
+	fmt.Println("Query result:", queryResult)
 }
