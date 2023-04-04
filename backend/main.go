@@ -1,15 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	Internal "github.com/jimmy7294/profile-page-w-graphQL/backend/internal"
+)
 
 func main() {
 	// Replace with your credentials
-	credentials := LoginCredentials{
+	credentials := Internal.LoginCredentials{
 		Username: "minhtuann",
 		Password: "Men0Grit!",
 	}
 
-	jwt, err := Signin(credentials)
+	jwt, err := Internal.Signin(credentials)
 	if err != nil {
 		fmt.Println("Error logging in:", err)
 		return
