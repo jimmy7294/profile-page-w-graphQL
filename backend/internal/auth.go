@@ -1,4 +1,4 @@
-package main
+package auth
 
 import (
 	"bytes"
@@ -19,7 +19,7 @@ func encodeCredentials(credentials LoginCredentials) string {
 	return base64.StdEncoding.EncodeToString([]byte(credStr))
 }
 
-func signin(credentials LoginCredentials) (string, error) {
+func Signin(credentials LoginCredentials) (string, error) {
 	client := &http.Client{}
 
 	data := bytes.NewBuffer([]byte{})
@@ -47,21 +47,5 @@ func signin(credentials LoginCredentials) (string, error) {
 		return "", err
 	}
 
-	fmt.Println("Token:", string(token))
 	return string(token), nil
-}
-
-func main() {
-	// Replace with your credentials
-	credentials := LoginCredentials{
-		Username: "minhtuann",
-		Password: "Men0Grit!",
-	}
-
-	jwt, err := signin(credentials)
-	if err != nil {
-		fmt.Println("Error logging in:", err)
-		return
-	}
-	fmt.Println("JWT obtained:", jwt)
 }
