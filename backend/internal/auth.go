@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type LoginCredentials struct {
@@ -42,10 +43,13 @@ func Signin(credentials LoginCredentials) (string, error) {
 		return "", errors.New(string(body))
 	}
 
-	token, err := ioutil.ReadAll(resp.Body)
+	tokenBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
 
-	return string(token), nil
+	// remove the quotes from the token
+	token := strings.ReplaceAll(string(tokenBytes), "\"", "")
+
+	return token, nil
 }

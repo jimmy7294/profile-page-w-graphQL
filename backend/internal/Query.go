@@ -8,7 +8,7 @@ import (
 )
 
 func ExecuteGraphQLQuery(jwt string) (string, error) {
-	client := graphql.NewClient("https://01.gritlab.ax/api/graphql")
+	client := graphql.NewClient("https://01.gritlab.ax/api/graphql-engine/v1/graphql")
 
 	// create a simple request for user data including id and login
 	query := `
