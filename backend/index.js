@@ -117,30 +117,35 @@ async function fetchTransactions(jwt) {
 
 // Execute another different query with the same JWT for different data
 
-async function main() {
-  const usernameOrEmail = "minhtuann";
-  const password = "Men0Grit!";
-
-  try {
+async function login() {
+  // instead of hardcoding the username and password, you can prompt the user to enter their username and password in the browser and then use the values they enter to call the getJWT function
+  // listening for the submit event on the form and then calling the getJWT function with the username and password that the user entered in the form
+  const form = document.querySelector("form");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const usernameOrEmail = document.querySelector("#usernameOrEmail").value;
+    const password = document.querySelector("#password").value;
+    console.log("usernameOrEmail:", usernameOrEmail, "password:", password);
     const jwt = await getJWT(usernameOrEmail, password);
-    // console.log("JWT:", jwt);
+    console.log("JWT:", jwt);
 
-    // You can now use the JWT to call the executeGraphQLQuery function
-    const responseData = await ExecuteGraphQLQuery(jwt);
-    // color the response data and add boldness and the return value in the console
-    console.log("%cExecuteGraphQLQuery:","color: red","font-weight: bold", responseData);
-  } catch (error) {
-    console.error("Error:", error);
-  }
+    try {
+      const responseData = await ExecuteGraphQLQuery(jwt);
+      console.log("%cExecuteGraphQLQuery:","color: red","font-weight: bold", responseData);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  
+    try {
+      const transactions = await fetchTransactions(jwt);
+      console.log("%cfetchTransactions:", "color: yellow", "font-weight: bold", transactions);
+    } catch (error) {
+      console.error("Error:", error);
+    }
 
-  try {
-    const jwt = await getJWT(usernameOrEmail, password);
-    // console.log("getting transactions with jwt", jwt);
-    const transactions = await fetchTransactions(jwt);
-    console.log("%cfetchTransactions:", "color: yellow", "font-weight: bold", transactions);
-  } catch (error) {
-    console.error("Error:", error);
-  }
+    form.style.display = "none";
+  });
+
 }
 
-main();
+login();
