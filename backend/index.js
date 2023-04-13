@@ -1,5 +1,5 @@
 import { GetJWT } from "./auth.js";
-import { fetchTransactionByXP, fetchTransactions } from "./query.js";
+import { fetchTransactionByXP, fetchTransactions, fetchXPFromPiscineJS, fetchXPFromPiscineGo} from "./query.js";
 
 let username = "";
 async function fetchUserId(jwt, username) {
@@ -61,9 +61,15 @@ async function login() {
 
       const transactions = await fetchTransactions(jwt, userId);
       console.log("%cfetchTransactions:", "color: yellow", transactions);
-      
+
       const getLevel = await fetchTransactionByXP(jwt, userId);
       console.log("%cfetchTransactionByXP:", "color: blue", getLevel);
+
+      const getXPFromPiscineJSQuery = await fetchXPFromPiscineJS(jwt, userId);
+      console.log("%cfetchXPFromPiscineJS:", "color: green", getXPFromPiscineJSQuery);
+
+      const getXPFromPiscineGoQuery = await fetchXPFromPiscineGo(jwt, userId);
+      console.log("%cfetchXPFromPiscineGo:", "color: orange", getXPFromPiscineGoQuery)
     } catch (error) {
       console.error("Error:", error);
     }
@@ -72,4 +78,3 @@ async function login() {
 }
 
 login();
-// instead of hardcoding the userID in the query, you can use the userID that is returned in the JWT when the user signs in for the fetchTransactions functionand fetchExpByProject function
