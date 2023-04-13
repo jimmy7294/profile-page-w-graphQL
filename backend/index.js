@@ -1,5 +1,5 @@
 import { GetJWT } from "./auth.js";
-import { fetchTransactionByXP, fetchTransactions, fetchXPFromPiscineJS, fetchXPFromPiscineGo} from "./query.js";
+import { fetchAuditInfo, fetchXPFromProject, fetchXPFromPiscineJS, fetchXPFromPiscineGo, fetchLevelProgression} from "./query.js";
 
 let username = "";
 async function fetchUserId(jwt, username) {
@@ -56,20 +56,24 @@ async function login() {
     console.log("JWT:", jwt);
 
     try {
+      //1. Get user ID
       const userId = await fetchUserId(jwt, username);
-      console.log("%cfetchUserId:", "color: red", userId);
-
-      const transactions = await fetchTransactions(jwt, userId);
-      console.log("%cfetchTransactions:", "color: yellow", transactions);
-
-      const getLevel = await fetchTransactionByXP(jwt, userId);
-      console.log("%cfetchTransactionByXP:", "color: blue", getLevel);
-
+      console.log("%cGet user ID:", "color: red", userId);
+      //2. Get XP from project
+      const getXPFromProject = await fetchXPFromProject(jwt, userId);
+      console.log("%cGet XP from PROJECT:", "color: yellow", getXPFromProject);
+      //3. Get XP from piscine JS
       const getXPFromPiscineJSQuery = await fetchXPFromPiscineJS(jwt, userId);
-      console.log("%cfetchXPFromPiscineJS:", "color: green", getXPFromPiscineJSQuery);
-
+      console.log("%cGet XP from JS Piscine:", "color: yellow", getXPFromPiscineJSQuery);
+      //4. Get XP from piscine Go
       const getXPFromPiscineGoQuery = await fetchXPFromPiscineGo(jwt, userId);
-      console.log("%cfetchXPFromPiscineGo:", "color: orange", getXPFromPiscineGoQuery)
+      console.log("%cGet XP from Go Piscine:", "color: yellow", getXPFromPiscineGoQuery)
+      //5. Get level progression
+      const getLevelProgressionQuery = await fetchLevelProgression(jwt, userId);
+      console.log("%cGet Level From Projects:", "color: yellow", getLevelProgressionQuery);
+      //6. Get audit info
+      const getAuditInfoQuery = await fetchAuditInfo(jwt, userId);
+      console.log("%cGet Audit Info:", "color: yellow", getAuditInfoQuery);
     } catch (error) {
       console.error("Error:", error);
     }

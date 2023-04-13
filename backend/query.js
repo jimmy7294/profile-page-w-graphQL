@@ -1,4 +1,4 @@
-export async function fetchTransactionByXP(jwt, userID) {
+export async function fetchXPFromProject(jwt, userID) {
   const getTransctionByLevelQuery = `
     query GetTransctionByLevel($userID: Int!){
         user: user_by_pk(id: $userID){
@@ -49,59 +49,6 @@ export async function fetchTransactionByXP(jwt, userID) {
   }
 }
 
-export async function fetchTransactions(jwt, userId) {
-  const getTransactionsQuery = `
-      query GetTransactions($userId: Int!) {
-        user: user_by_pk(id: $userId) {
-          transactions(order_by: {createdAt: desc}) {
-            createdAt
-            type
-            amount
-            objectId
-            userId
-            path
-            object {
-              name
-              type
-            }
-          }
-        }
-      }
-    `;
-
-  const url = "https://01.gritlab.ax/api/graphql-engine/v1/graphql";
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${jwt}`,
-  };
-
-  const requestBody = {
-    query: getTransactionsQuery,
-    variables: {
-      userId: userId,
-    },
-  };
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
-    }
-
-    const respData = await response.json();
-    console.log("respData:", respData);
-    return JSON.stringify(respData);
-  } catch (error) {
-    console.error("Error:", error);
-    return "";
-  }
-}
-
 // function that gets xp gained from JS-piscine based on type = "xp", object type = "exercise" and path = "/gritlab/school-curriculum/piscine-js"
 // the full query is like this: {
 /*   user: user_by_pk(id: 1182) {
@@ -139,7 +86,6 @@ export async function fetchXPFromPiscineJS(jwt, userID) {
             ]
           }
         ) {
-          createdAt
           amount
           objectId
           object{
@@ -176,7 +122,7 @@ export async function fetchXPFromPiscineJS(jwt, userID) {
     const respData = await response.json();
     // console.log("%crespDataforXPFromPiscineJS:", "color: blue", respData);
     return JSON.stringify(respData);
-  } catch (error) { 
+  } catch (error) {
     console.error("Error:", error);
     return "";
   }
@@ -197,7 +143,6 @@ export async function fetchXPFromPiscineGo(jwt, userID) {
             ]
           }
         ) {
-          createdAt
           amount
           objectId
           object{
@@ -205,37 +150,161 @@ export async function fetchXPFromPiscineGo(jwt, userID) {
           }
         }
       }
-    }`
-  
-    const url = "https://01.gritlab.ax/api/graphql-engine/v1/graphql";
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${jwt}`,
-    };
+    }`;
 
-    const requestBody = {
-      query: getXPFromPiscineGoQuery,
-      variables: {
-        userID: userID,
-      }
-    };
+  const url = "https://01.gritlab.ax/api/graphql-engine/v1/graphql";
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwt}`,
+  };
 
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify(requestBody),
-      });
+  const requestBody = {
+    query: getXPFromPiscineGoQuery,
+    variables: {
+      userID: userID,
+    },
+  };
 
-      if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
-      }
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    });
 
-      const respData = await response.json();
-      // console.log("%crespDataforXPFromPiscineGo:", "color: blue", respData);
-      return JSON.stringify(respData);
-    } catch (error) {
-      console.error("Error:", error);
-      return "";
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
     }
+
+    const respData = await response.json();
+    // console.log("%crespDataforXPFromPiscineGo:", "color: blue", respData);
+    return JSON.stringify(respData);
+  } catch (error) {
+    console.error("Error:", error);
+    return "";
+  }
+}
+
+// query that gets the info of the transaction with type "level" to get the level progression of the user over time
+/* query getLevel($userID: Int!) {
+  user: user_by_pk(id: $userID) {
+    transactions(order_by: {amount: desc}, where:
+      {_and: [
+        {type: {_eq: "level"}},
+        {object: {type: {_eq: "project"}}}
+      ]}) {
+      type
+      amount
+      userId
+      path
+      object {
+        name
+        type
+      }
+    }
+  }
+} */
+
+export async function fetchLevelProgression(jwt, userID) {
+  const getLevelProgressionQuery = `
+    query GetLevelProgression($userID: Int!) {
+      user: user_by_pk(id: $userID) {
+        transactions(order_by: {amount: desc}, where:
+        {_and: [
+          {type: {_eq: "level"}},
+          {object: {type: {_eq: "project"}}}
+        ]}) {
+          amount
+          path
+          object {
+            name
+          }
+        }
+      }
+    }`;
+
+  const url = "https://01.gritlab.ax/api/graphql-engine/v1/graphql";
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwt}`,
+  };
+
+  const requestBody = {
+    query: getLevelProgressionQuery,
+    variables: {
+      userID: userID,
+    },
+  }; 
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const respData = await response.json();
+    // console.log("%crespDataforLevelProgression:", "color: blue", respData);
+    return JSON.stringify(respData);
+  }
+  catch (error) {
+    console.error("Error:", error);
+    return "";
+  }
+}
+
+// get the auditRatio and totalUp and totalDown for creating the auditRatio chart 
+/* query getAuditInfo($userID: Int!) {
+  user_by_pk(id: $userID){
+   auditRatio
+    totalUp
+    totalDown
+  }
+} */
+
+export async function fetchAuditInfo(jwt, userID) {
+  const getAuditInfoQuery = `
+    query GetAuditInfo($userID: Int!) {
+      user: user_by_pk(id: $userID) {
+        auditRatio
+        totalUp
+        totalDown
+      }
+    }`;
+
+  const url = "https://01.gritlab.ax/api/graphql-engine/v1/graphql";
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwt}`,
+  };
+
+  const requestBody = {
+    query: getAuditInfoQuery,
+    variables: {
+      userID: userID,
+    },
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const respData = await response.json();
+    // console.log("%crespDataforAuditInfo:", "color: blue", respData);
+    return JSON.stringify(respData);
+  } catch (error) {
+    console.error("Error:", error);
+    return "";
+  }
 }
