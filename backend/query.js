@@ -209,7 +209,7 @@ export async function fetchLevelProgression(jwt, userID) {
   const getLevelProgressionQuery = `
     query GetLevelProgression($userID: Int!) {
       user: user_by_pk(id: $userID) {
-        transactions(order_by: {amount: desc}, where:
+        transactions(order_by: {amount: asc}, where:
         {_and: [
           {type: {_eq: "level"}},
           {object: {type: {_eq: "project"}}}

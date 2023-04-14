@@ -6,7 +6,7 @@ import {
   fetchXPFromPiscineGo,
   fetchLevelProgression,
 } from "./query.js";
-import { drawPieChart } from "./draw.js";
+import { drawLevelProgression, drawPieChart } from "./draw.js";
 
 
 let username = "";
@@ -94,7 +94,8 @@ async function login() {
       //6. Get audit info
       const getAuditInfoQuery = await fetchAuditInfo(jwt, userId);
       console.log("%cGet Audit Info:", "color: yellow", getAuditInfoQuery);
-      drawPieChart(getAuditInfoQuery);
+      drawPieChart(getAuditInfoQuery); //draw the pie chart
+      drawLevelProgression(getLevelProgressionQuery); //draw the level progression
     } catch (error) {
       console.error("Error:", error);
     }
