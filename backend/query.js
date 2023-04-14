@@ -234,7 +234,7 @@ export async function fetchLevelProgression(jwt, userID) {
     variables: {
       userID: userID,
     },
-  }; 
+  };
 
   try {
     const response = await fetch(url, {
@@ -250,14 +250,13 @@ export async function fetchLevelProgression(jwt, userID) {
     const respData = await response.json();
     // console.log("%crespDataforLevelProgression:", "color: blue", respData);
     return JSON.stringify(respData);
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error:", error);
     return "";
   }
 }
 
-// get the auditRatio and totalUp and totalDown for creating the auditRatio chart 
+// get the auditRatio and totalUp and totalDown for creating the auditRatio chart
 /* query getAuditInfo($userID: Int!) {
   user_by_pk(id: $userID){
    auditRatio
@@ -308,3 +307,69 @@ export async function fetchAuditInfo(jwt, userID) {
     return "";
   }
 }
+
+
+// get all the available masteries of the user by this particular query, change it into $userID: Int! instead of 1182
+/* {
+  user_by_pk(id: 1182) {
+    lastName
+    firstName
+    transactions(
+      distinct_on: [type]
+      where: {type: {_like: "skill_%"}}
+    ) {
+      type
+      amount
+    }
+  }
+} */
+
+export async function fetchMasteries(jwt, userID) { // not in use
+  const getMasteriesQuery = `
+    query GetMasteries($userID: Int!) {
+      user: user_by_pk(id: $userID) {
+        transactions(
+          distinct_on: [type]
+          where: {type: {_like: "skill_%"}}
+        ) {
+          type
+          amount
+        }
+      }
+    }`;
+
+  const url = "https://01.gritlab.ax/api/graphql-engine/v1/graphql";
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwt}`,
+  };
+
+  const requestBody = {
+    query: getMasteriesQuery,
+    variables: {
+      userID: userID,
+    },
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const respData = await response.json();
+    // console.log("%crespDataforMasteries:", "color: blue", respData);
+    return JSON.stringify(respData);
+  }
+  catch (error) {
+    console.error("Error:", error);
+    return "";
+  }
+}
+
+

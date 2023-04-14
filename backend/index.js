@@ -1,5 +1,13 @@
 import { GetJWT } from "./auth.js";
-import { fetchAuditInfo, fetchXPFromProject, fetchXPFromPiscineJS, fetchXPFromPiscineGo, fetchLevelProgression} from "./query.js";
+import {
+  fetchAuditInfo,
+  fetchXPFromProject,
+  fetchXPFromPiscineJS,
+  fetchXPFromPiscineGo,
+  fetchLevelProgression,
+} from "./query.js";
+import { drawPieChart } from "./draw.js";
+
 
 let username = "";
 async function fetchUserId(jwt, username) {
@@ -64,16 +72,29 @@ async function login() {
       console.log("%cGet XP from PROJECT:", "color: yellow", getXPFromProject);
       //3. Get XP from piscine JS
       const getXPFromPiscineJSQuery = await fetchXPFromPiscineJS(jwt, userId);
-      console.log("%cGet XP from JS Piscine:", "color: yellow", getXPFromPiscineJSQuery);
+      console.log(
+        "%cGet XP from JS Piscine:",
+        "color: yellow",
+        getXPFromPiscineJSQuery
+      );
       //4. Get XP from piscine Go
       const getXPFromPiscineGoQuery = await fetchXPFromPiscineGo(jwt, userId);
-      console.log("%cGet XP from Go Piscine:", "color: yellow", getXPFromPiscineGoQuery)
+      console.log(
+        "%cGet XP from Go Piscine:",
+        "color: yellow",
+        getXPFromPiscineGoQuery
+      );
       //5. Get level progression
       const getLevelProgressionQuery = await fetchLevelProgression(jwt, userId);
-      console.log("%cGet Level From Projects:", "color: yellow", getLevelProgressionQuery);
+      console.log(
+        "%cGet Level From Projects:",
+        "color: yellow",
+        getLevelProgressionQuery
+      );
       //6. Get audit info
       const getAuditInfoQuery = await fetchAuditInfo(jwt, userId);
       console.log("%cGet Audit Info:", "color: yellow", getAuditInfoQuery);
+      drawPieChart(getAuditInfoQuery);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -81,4 +102,6 @@ async function login() {
   });
 }
 
+
 login();
+

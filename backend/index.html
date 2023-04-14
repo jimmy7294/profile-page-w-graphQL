@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <form action="/login" method="POST">
-        <label for="usernameOrEmail">Username or Email</label>
-        <input type="text" name="usernameOrEmail" id="usernameOrEmail">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password">
-        <button type="submit">Login</button>
+      <label for="usernameOrEmail">Username or Email</label>
+      <input type="text" name="usernameOrEmail" id="usernameOrEmail" />
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" />
+      <button type="submit">Login</button>
     </form>
-</body>
-<script type="module" src="./index.js"></script>
+
+    <div class="chart-container">
+      <svg id="auditRatioChart" width="200" height="200"></svg>
+      <div id="auditRatioDisplay" class="audit-ratio-display"></div>
+    </div>
+  </body>
+  <script type="module" src="./index.js"></script>
 </html>
