@@ -6,8 +6,11 @@ import {
   fetchXPFromPiscineGo,
   fetchLevelProgression,
 } from "./query.js";
-import { drawLevelProgression, drawPieChart } from "./draw.js";
-
+import {
+  drawLevelProgression,
+  drawPieChart,
+  drawXPFromPiscineGo,
+} from "./draw.js";
 
 let username = "";
 async function fetchUserId(jwt, username) {
@@ -96,6 +99,7 @@ async function login() {
       console.log("%cGet Audit Info:", "color: yellow", getAuditInfoQuery);
       drawPieChart(getAuditInfoQuery); //draw the pie chart
       drawLevelProgression(getLevelProgressionQuery); //draw the level progression
+      drawXPFromPiscineGo(getXPFromPiscineGoQuery); //draw the XP from piscine Go
     } catch (error) {
       console.error("Error:", error);
     }
@@ -103,6 +107,4 @@ async function login() {
   });
 }
 
-
 login();
-

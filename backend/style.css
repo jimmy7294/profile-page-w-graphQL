@@ -7,8 +7,8 @@
 }
 
 #auditRatioChart {
-  width: 10%;
-  height: 10%;
+  width: 30%;
+  height: 30%;
 
 }
 
@@ -30,4 +30,9 @@ path:hover {
 #levelProgressionChart {
   width:100%;
   height: 50%;
+}
+
+#xpFromPiscineGoChart {
+  width: 100%;
+  height: 100%;
 }

@@ -15,78 +15,21 @@
       <input type="password" name="password" id="password" />
       <button type="submit">Login</button>
     </form>
-
-    <!-- script:
-      export function drawLevelProgression(levelProgression) {
-  const jsonObj = JSON.parse(levelProgression);
-  const transactions = jsonObj.data.user.transactions;
-  const levels = transactions.map((transaction) => transaction.amount);
-  const projects = transactions.map((transaction) => transaction.object.name);
-
-  const svg = document.getElementById("levelProgressionChart");
-  svg.setAttribute("viewBox", "0 0 200 200");
-
-  const levelProgressionDisplay = document.getElementById(
-    "levelProgressionDisplay"
-  );
-
-  let level = 0;
-  let project = "";
-  let x = 0;
-  let y = 0;
-  let width = 0;
-  let height = 0;
-  let color = "";
-  let title = "";
-
-  for (let i = 0; i < levels.length; i++) {
-
-    if (levels[i] !== level) {
-      level = levels[i];
-      project = projects[i];
-      x = 0;
-      y = 0;
-      width = 0;
-      height = 0;
-      color = "";
-      title = "";
-
-      x = 10;
-      y = 10 + (level - 1) * 10;
-      width = 180;
-      height = 10;
-      color = "lightgreen";
-      title = `Level ${level}: ${project}`;
-
-      const levelSlice = createSVGElement("rect", {
-        x: x,
-        y: y,
-        width: width,
-        height: height,
-        fill: color,
-        class: "slice",
-        "data-total": level,
-      });
-      levelSlice.innerHTML = `<title>${title}</title>`;
-      svg.appendChild(levelSlice);
-
-      levelProgressionDisplay.innerHTML += `${title}<br>`;
-    }
-  }
-
-  levelProgressionDisplay.innerHTML += `Total Levels: ${level}`;
-
-}
-     -->
-
+    <!-- auditRatio Pie Chart -->
     <div class="chart-container">
       <svg id="auditRatioChart" width="200" height="200"></svg>
       <div id="auditRatioDisplay" class="audit-ratio-display"></div>
     </div>
-    
+    <!-- levelProgress Bar Chart -->
     <div class="levelProgress-container">
       <svg id="levelProgressionChart" width="200" height="200"></svg>
       <div id="levelProgressionDisplay" class="level-progression-display"></div>
+    </div>
+    <!-- xpFromGoPiscine Bar Chart -->
+    <div class="xpFromPiscineGoChart">
+      <svg id="xpFromPiscineGoChart" width="200" height="200"></svg>
+      <div id="xpFromPiscineGoDisplay" class="xp-from-piscine-go-display"></div>
+    </div>
   </body>
   <script type="module" src="./index.js"></script>
 </html>
