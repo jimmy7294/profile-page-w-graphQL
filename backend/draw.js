@@ -189,10 +189,11 @@ export function drawXPFromPiscineGo(xpFromPiscineGo) {
   const svgHeight = padding * 2 + exercises.length * dataColumnHeight;
 
   const svg = document.getElementById("xpFromPiscineGoChart");
-  svg.setAttribute("viewBox", `0 0 ${svgWidth} ${svgHeight}`);
+  svg.setAttribute("width", svgWidth);
+  svg.setAttribute("height", svgHeight);
 
   const xScale = (svgWidth - 2 * padding) / Math.max(...xp);
-  const yScale = (svgHeight - 2 * padding) / exercises.length;
+  const yScale = dataColumnHeight;
 
   // Add chart title
   const chartTitle = createSVGElement("text", {
