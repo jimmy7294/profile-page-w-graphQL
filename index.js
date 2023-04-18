@@ -6,6 +6,7 @@ import {
   fetchXPFromPiscineGo,
   fetchLevelProgression,
   fetchMasteries,
+  fetchUserInfo,
 } from "./query.js";
 import {
   drawLevelProgression,
@@ -13,7 +14,9 @@ import {
   drawXPFromPiscineGo,
   drawXPFromPiscineJS,
   drawMasteries,
+  showBasicUserInfo,
 } from "./draw.js";
+import { logout } from "./helper.js";
 
 let username = "";
 async function fetchUserId(jwt, usernameOrEmail) {
@@ -110,17 +113,29 @@ async function login() {
       const getMasteries = await fetchMasteries(jwt, userId);
       console.log("%cGet Masteries:", "color: yellow", getMasteries);
 
-      //8. Draw charts
+      //8. Get user info
+      const GetUserInfo = await fetchUserInfo(jwt, userId);
+      console.log("%cGet User Info:", "color: yellow", GetUserInfo);
+
+      //9. Draw charts
       drawPieChart(getAuditInfoQuery); //draw the pie chart
       drawLevelProgression(getLevelProgressionQuery); //draw the level progression
       drawXPFromPiscineGo(getXPFromPiscineGoQuery); //draw the XP from piscine Go
       drawXPFromPiscineJS(getXPFromPiscineJSQuery); //draw the XP from piscine JS
       drawMasteries(getMasteries); //draw the masteries
+      showBasicUserInfo(GetUserInfo); //show the basic user info
     } catch (error) {
       console.error("Error:", error);
     }
     form.style.display = "none";
+    document.querySelector(".logout-container").style.display = "block";
   });
 }
 
 login();
+// when the user press the logout button, the page will be reloaded
+document.querySelector("#logoutButton").addEventListener("click", () => {
+  logout();
+});
+// hide the logout button before the user logs in
+document.querySelector(".logout-container").style.display = "none";

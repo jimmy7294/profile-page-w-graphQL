@@ -308,7 +308,6 @@ export async function fetchAuditInfo(jwt, userID) {
   }
 }
 
-
 // get all the available masteries of the user by this particular query, change it into $userID: Int! instead of 1182
 /* {
   user_by_pk(id: 1182) {
@@ -324,7 +323,8 @@ export async function fetchAuditInfo(jwt, userID) {
   }
 } */
 
-export async function fetchMasteries(jwt, userID) { // not in use
+export async function fetchMasteries(jwt, userID) {
+  // not in use
   const getMasteriesQuery = `
   query GetMasteries($userID: Int!) {
     user: user_by_pk(id: $userID) {
@@ -378,11 +378,54 @@ export async function fetchMasteries(jwt, userID) { // not in use
     const respData = await response.json();
     // console.log("%crespDataforMasteries:", "color: blue", respData);
     return JSON.stringify(respData);
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error:", error);
     return "";
   }
 }
 
+// query that return basic user info
+export async function fetchUserInfo(jwt, userID) {
+  const getUserInfoQuery = `
+  query GetUserInfo($userID: Int!) {
+    user: user_by_pk(id: $userID) {
+      firstName
+      lastName
+      createdAt
+      email
+      login
+    }
+  }`;
 
+  const url = "https://01.gritlab.ax/api/graphql-engine/v1/graphql";
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwt}`,
+  };
+
+  const requestBody = {
+    query: getUserInfoQuery,
+    variables: {
+      userID: userID,
+    },
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const respData = await response.json();
+    // console.log("%crespDataforUserInfo:", "color: blue", respData);
+    return JSON.stringify(respData);
+  } catch (error) {
+    console.error("Error:", error);
+    return "";
+  }
+}

@@ -534,5 +534,65 @@ export function drawMasteries(getMasteries) {
     frameCircle.setAttribute("stroke", "black");
     frameCircle.setAttribute("stroke-width", 1);
     svg.appendChild(frameCircle);
+
+    // Add chart title
+    const chartTitle = document.createElementNS(svg.namespaceURI, "text");
+    chartTitle.setAttribute("x", svgCenterX);
+    chartTitle.setAttribute("y", svgCenterY - svgRadius - 50);
+    chartTitle.setAttribute("text-anchor", "middle");
+    chartTitle.setAttribute("dominant-baseline", "middle");
+    chartTitle.setAttribute("font-size", "20px");
+    chartTitle.setAttribute("font-weight", "bold");
+    chartTitle.textContent = "Masteries";
+    svg.appendChild(chartTitle);
   }
 }
+
+// show basic user info
+export function showBasicUserInfo(getUserInfo) {
+  const jsonObj = JSON.parse(getUserInfo);
+  const userInfo = jsonObj.data.user;
+  const firstName = userInfo.firstName;
+  const lastName = userInfo.lastName;
+  const createdAtOrg = userInfo.createdAt;
+  // convert createdAt to a hh:mm dd/mm/yyyy format
+  const createdAt =
+    createdAtOrg.slice(11, 16) +
+    " " +
+    createdAtOrg.slice(8, 10) +
+    "/" +
+    createdAtOrg.slice(5, 7) +
+    "/" +
+    createdAtOrg.slice(0, 4);
+  const email = userInfo.email;
+  const login = userInfo.login;
+
+  const userInfoDiv = document.getElementById("userBasicInfo");
+  userInfoDiv.innerHTML = `<p>First Name: ${firstName}</p>
+    <p>Last Name: ${lastName}</p>
+    <p>Created At: ${createdAt}</p>
+    <p>Email: <span class="email-text" style="display: none;">${email}</span> <button id="toggleEmail">Show/Hide</button></p>
+    <p>Login: <button id="toggleRickGif">Show/Hide</button></p>
+    <div class="rick-gif" style="display: none;">
+      <div style="padding-top:72.871%;position:relative;"><iframe src="https://gifer.com/embed/4KL" width="100%" height="100%" style='position:absolute;top:0;left:0;' frameBorder="0" allowFullScreen></iframe></div>
+    </div>`;
+
+  document.getElementById("toggleRickGif").addEventListener("click", () => {
+    const rickGif = userInfoDiv.querySelector(".rick-gif");
+    if (rickGif.style.display === "none") {
+      rickGif.style.display = "block";
+    } else {
+      rickGif.style.display = "none";
+    }
+  });
+
+  document.getElementById("toggleEmail").addEventListener("click", () => {
+    const emailText = userInfoDiv.querySelector(".email-text");
+    if (emailText.style.display === "none") {
+      emailText.style.display = "inline";
+    } else {
+      emailText.style.display = "none";
+    }
+  });
+}
+

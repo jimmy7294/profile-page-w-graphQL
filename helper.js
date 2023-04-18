@@ -38,3 +38,11 @@ export function addButton(svg, padding, callback) {
 
   svg.appendChild(buttonGroup);
 }
+
+// log the user out of the application
+export function logout() {
+  // when the user presses the logout button, remove the jwt and username from local storage
+  localStorage.removeItem("jwt");
+  localStorage.removeItem("username");
+  window.location.reload();
+}
