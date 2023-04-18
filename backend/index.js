@@ -10,6 +10,7 @@ import {
   drawLevelProgression,
   drawPieChart,
   drawXPFromPiscineGo,
+  drawXPFromPiscineJS,
 } from "./draw.js";
 
 let username = "";
@@ -105,6 +106,7 @@ async function login() {
       drawPieChart(getAuditInfoQuery); //draw the pie chart
       drawLevelProgression(getLevelProgressionQuery); //draw the level progression
       drawXPFromPiscineGo(getXPFromPiscineGoQuery); //draw the XP from piscine Go
+      drawXPFromPiscineJS(getXPFromPiscineJSQuery); //draw the XP from piscine JS
     } catch (error) {
       console.error("Error:", error);
     }

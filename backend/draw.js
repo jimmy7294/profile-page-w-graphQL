@@ -294,3 +294,126 @@ export function drawXPFromPiscineGo(xpFromPiscineGo) {
     svg.appendChild(xpLabel);
   }
 }
+
+// draw XP gained through PiscineJS the is the same as the one above
+export function drawXPFromPiscineJS(xpFromPiscineJS) {
+  const jsonObj = JSON.parse(xpFromPiscineJS);
+  const transactions = jsonObj.data.user.transactions;
+  const exercises = transactions.map((transaction) => transaction.object.name);
+  const xp = transactions.map((transaction) => transaction.amount);
+
+  const svgWidth = 600;
+  const padding = 30;
+  const dataColumnHeight = 30;
+  const svgHeight = padding * 2 + exercises.length * dataColumnHeight;
+
+  const svg = document.getElementById("xpFromPiscineJSChart");
+  svg.setAttribute("width", svgWidth);
+  svg.setAttribute("height", svgHeight);
+
+  const xScale = (svgWidth - 2 * padding) / Math.max(...xp);
+  const yScale = dataColumnHeight;
+
+  // Add chart title
+  const chartTitle = createSVGElement("text", {
+    x: padding,
+    y: padding - 10,
+    "text-anchor": "start",
+    "font-size": 16,
+    "font-weight": "bold",
+  });
+  chartTitle.textContent = "XP Gained from JS Piscine Exercises";
+  svg.appendChild(chartTitle);
+
+  // Store original height for uncollapsing
+  const originalSvgHeight = svgHeight;
+
+  const callback = () => {
+    const slices = document.getElementsByClassName("sliceOfJSPiscine");
+
+    // If the chart is collapsed, uncollapse it
+    if (svg.getAttribute("height") == 60) {
+      svg.setAttribute("height", originalSvgHeight);
+      chartTitle.setAttribute("y", padding - 10);
+      addButton(svg, padding, callback);
+      for (let i = 0; i < slices.length; i++) {
+        const slice = slices[i];
+        slice.style.display = "";
+      }
+    } else {
+      // Otherwise, collapse the chart
+      svg.setAttribute("height", 60);
+      chartTitle.setAttribute("y", 40);
+      addButton(svg, padding, callback);
+      for (let i = 0; i < slices.length; i++) {
+        const slice = slices[i];
+        slice.style.display = "none";
+      }
+    }
+
+    // Adjust the position of the exercise and XP labels
+    const exerciseLabels = document.getElementsByClassName("exercisePiscineLabel");
+    const xpLabels = document.getElementsByClassName("xpPiscineLabel");
+
+    for (let i = 0; i < exerciseLabels.length; i++) {
+      const exerciseLabel = exerciseLabels[i];
+      const xp = xpLabels[i];
+
+      if (svg.getAttribute("height") == 60) {
+        exerciseLabel.style.display = "none";
+        xp.style.display = "none";
+      }
+      else {
+        exerciseLabel.style.display = "";
+        xp.style.display = "";
+      }
+    }
+  };
+
+  addButton(svg, padding, callback);
+
+  for (let i = 0; i < xp.length; i++) {
+    const exercise = exercises[i];
+    const xpGained = xp[i];
+    const x = padding;
+    const y = padding + i * yScale;
+    const width = xpGained * xScale;
+    const height = yScale * 1;
+    const color = "lightgreen";
+    const title = `${exercise}: ${xpGained} xp`;
+
+    const xpSlice = createSVGElement("rect", {
+      x: x,
+      y: y,
+      width: width,
+      height: height,
+      fill: color,
+      class: "sliceOfJSPiscine",
+      "data-total": xpGained,
+      // add borderline to each bar
+      stroke: "black",
+    });
+    xpSlice.innerHTML = `<title>${title}</title>`;
+    svg.appendChild(xpSlice);
+
+    const exerciseLabel = createSVGElement("text", {
+      x: x + width + 15,
+      y: y + height / 2 + 5,
+      "text-anchor": "start",
+      "font-size": 12,
+      class: "exercisePiscineLabel",
+    });
+    exerciseLabel.textContent = exercise;
+    svg.appendChild(exerciseLabel);
+
+    const xpLabel = createSVGElement("text", {
+      x: x + width / 2,
+      y: y + 20,
+      "text-anchor": "middle",
+      "font-size": 12,
+      class: "xpPiscineLabel",
+    });
+    xpLabel.textContent = xpGained;
+    svg.appendChild(xpLabel);
+  }
+}
