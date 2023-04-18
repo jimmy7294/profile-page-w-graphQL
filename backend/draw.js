@@ -352,7 +352,9 @@ export function drawXPFromPiscineJS(xpFromPiscineJS) {
     }
 
     // Adjust the position of the exercise and XP labels
-    const exerciseLabels = document.getElementsByClassName("exercisePiscineLabel");
+    const exerciseLabels = document.getElementsByClassName(
+      "exercisePiscineLabel"
+    );
     const xpLabels = document.getElementsByClassName("xpPiscineLabel");
 
     for (let i = 0; i < exerciseLabels.length; i++) {
@@ -362,8 +364,7 @@ export function drawXPFromPiscineJS(xpFromPiscineJS) {
       if (svg.getAttribute("height") == 60) {
         exerciseLabel.style.display = "none";
         xp.style.display = "none";
-      }
-      else {
+      } else {
         exerciseLabel.style.display = "";
         xp.style.display = "";
       }
@@ -415,5 +416,123 @@ export function drawXPFromPiscineJS(xpFromPiscineJS) {
     });
     xpLabel.textContent = xpGained;
     svg.appendChild(xpLabel);
+  }
+}
+
+// draw a masteries pie chart that has 6 properties: Prog, Go, Back-end, Front-end, Js, Html that has the same skill value denominator of 100
+// returned data: Get Masteries: {"data":{"user":{"transactions":[{"type":"skill_back-end","amount":50},{"type":"skill_front-end","amount":45},{"type":"skill_go","amount":55},{"type":"skill_html","amount":35},{"type":"skill_js","amount":40},{"type":"skill_prog","amount":60}]}}}
+
+export function drawMasteries(getMasteries) {
+  const jsonObj = JSON.parse(getMasteries);
+  const masteries = jsonObj.data.user.transactions;
+  const masteryNameOrg = masteries.map((mastery) => mastery.type);
+  const masteryName = masteryNameOrg.map((mastery) => {
+    return mastery.slice(6, 7).toUpperCase() + mastery.slice(7);
+  });
+
+  const masteryValue = masteries.map((mastery) => mastery.amount);
+
+  const svgWidth = 500;
+  const svgHeight = 500;
+  const svgCenterX = svgWidth / 2;
+  const svgCenterY = svgHeight / 2;
+  const svgRadius = 150;
+
+  const svg = document.getElementById("masteryPieChart");
+  svg.setAttribute("width", svgWidth);
+  svg.setAttribute("height", svgHeight);
+
+  const sectors = masteryName.length;
+  const anglePerSector = (2 * Math.PI) / sectors;
+
+  // Create a text element to display the value
+  const valueDisplay = document.createElementNS(svg.namespaceURI, "text");
+  valueDisplay.setAttribute("x", svgCenterX + svgRadius);
+  valueDisplay.setAttribute("y", svgCenterY + svgRadius);
+  valueDisplay.setAttribute("text-anchor", "middle");
+  valueDisplay.setAttribute("dominant-baseline", "middle");
+  valueDisplay.setAttribute("font-size", "20px");
+  valueDisplay.setAttribute("font-weight", "bold");
+  valueDisplay.setAttribute("display", "none");
+  svg.appendChild(valueDisplay);
+
+  // Draw frame lines
+  for (let i = 0; i < sectors; i++) {
+    const currentAngle = anglePerSector * i;
+    const nextAngle = currentAngle + anglePerSector;
+
+    const x1 = svgCenterX + svgRadius * Math.cos(currentAngle);
+    const y1 = svgCenterY + svgRadius * Math.sin(currentAngle);
+    const x2 = svgCenterX + svgRadius * Math.cos(nextAngle);
+    const y2 = svgCenterY + svgRadius * Math.sin(nextAngle);
+
+    const frameLine = document.createElementNS(svg.namespaceURI, "line");
+    frameLine.setAttribute("x1", svgCenterX);
+    frameLine.setAttribute("y1", svgCenterY);
+    frameLine.setAttribute("x2", x1);
+    frameLine.setAttribute("y2", y1);
+    frameLine.setAttribute("stroke", "black");
+    frameLine.setAttribute("stroke-width", 1);
+    svg.appendChild(frameLine);
+  }
+
+  // Draw sectors
+  for (let i = 0; i < sectors; i++) {
+    const currentAngle = anglePerSector * i;
+    const nextAngle = currentAngle + anglePerSector;
+
+    const currentRadius = (masteryValue[i] / 100) * svgRadius;
+
+    const x1 = svgCenterX + currentRadius * Math.cos(currentAngle);
+    const y1 = svgCenterY + currentRadius * Math.sin(currentAngle);
+    const x2 = svgCenterX + currentRadius * Math.cos(nextAngle);
+    const y2 = svgCenterY + currentRadius * Math.sin(nextAngle);
+
+    const largeArcFlag = 0;
+
+    const sectorPath = document.createElementNS(svg.namespaceURI, "path");
+    sectorPath.setAttribute(
+      "d",
+      `M${svgCenterX} ${svgCenterY} L${x1} ${y1} A${currentRadius} ${currentRadius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`
+    );
+    sectorPath.setAttribute("fill", `hsl(${(i * 60) % 360}, 50%, 50%)`);
+    svg.appendChild(sectorPath);
+
+    // Add click event listener to the sectorPath element
+    sectorPath.addEventListener("click", () => {
+      // Toggle value display visibility
+      if (valueDisplay.getAttribute("display") === "none") {
+        valueDisplay.setAttribute("display", "inline");
+        valueDisplay.textContent = `Value: ${masteryValue[i]}`;
+      } else {
+        valueDisplay.setAttribute("display", "none");
+      }
+    });
+
+    const labelX =
+      svgCenterX +
+      (svgRadius + 20) * Math.cos(currentAngle + anglePerSector / 2);
+    const labelY =
+      svgCenterY +
+      (svgRadius + 20) * Math.sin(currentAngle + anglePerSector / 2);
+
+    const textLabel = document.createElementNS(svg.namespaceURI, "text");
+    textLabel.setAttribute("x", labelX);
+    textLabel.setAttribute("y", labelY);
+    textLabel.setAttribute("text-anchor", "middle");
+    textLabel.setAttribute("dominant-baseline", "middle");
+    textLabel.setAttribute("font-size", "12px");
+    textLabel.textContent = masteryName[i];
+    svg.appendChild(textLabel);
+
+    // Draw frame circle
+    const frameCircle = document.createElementNS(svg.namespaceURI, "circle");
+    frameCircle.setAttribute("cx", svgCenterX);
+    frameCircle.setAttribute("cy", svgCenterY);
+    frameCircle.setAttribute("r", svgRadius);
+    frameCircle.setAttribute("fill", "none");
+    frameCircle.setAttribute("stroke", "black");
+    frameCircle.setAttribute("stroke-width", 1);
+    svg.appendChild(frameCircle);
   }
 }

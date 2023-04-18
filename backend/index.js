@@ -5,12 +5,14 @@ import {
   fetchXPFromPiscineJS,
   fetchXPFromPiscineGo,
   fetchLevelProgression,
+  fetchMasteries,
 } from "./query.js";
 import {
   drawLevelProgression,
   drawPieChart,
   drawXPFromPiscineGo,
   drawXPFromPiscineJS,
+  drawMasteries,
 } from "./draw.js";
 
 let username = "";
@@ -103,10 +105,17 @@ async function login() {
       //6. Get audit info
       const getAuditInfoQuery = await fetchAuditInfo(jwt, userId);
       console.log("%cGet Audit Info:", "color: yellow", getAuditInfoQuery);
+
+      //7. Get masteries
+      const getMasteries = await fetchMasteries(jwt, userId);
+      console.log("%cGet Masteries:", "color: yellow", getMasteries);
+
+      //8. Draw charts
       drawPieChart(getAuditInfoQuery); //draw the pie chart
       drawLevelProgression(getLevelProgressionQuery); //draw the level progression
       drawXPFromPiscineGo(getXPFromPiscineGoQuery); //draw the XP from piscine Go
       drawXPFromPiscineJS(getXPFromPiscineJSQuery); //draw the XP from piscine JS
+      drawMasteries(getMasteries); //draw the masteries
     } catch (error) {
       console.error("Error:", error);
     }

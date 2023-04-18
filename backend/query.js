@@ -326,17 +326,30 @@ export async function fetchAuditInfo(jwt, userID) {
 
 export async function fetchMasteries(jwt, userID) { // not in use
   const getMasteriesQuery = `
-    query GetMasteries($userID: Int!) {
-      user: user_by_pk(id: $userID) {
-        transactions(
-          distinct_on: [type]
-          where: {type: {_like: "skill_%"}}
-        ) {
-          type
-          amount
+  query GetMasteries($userID: Int!) {
+    user: user_by_pk(id: $userID) {
+      transactions(
+        order_by: {type: asc, createdAt: desc}
+        distinct_on: type
+        where: {
+          type: {
+            _in: [
+              "skill_go",
+              "skill_prog",
+              "skill_back-end",
+              "skill_front-end",
+              "skill_html",
+              "skill_js"
+            ]
+          }
         }
+      ) {
+        type
+        amount
       }
-    }`;
+    }
+  }
+  `;
 
   const url = "https://01.gritlab.ax/api/graphql-engine/v1/graphql";
   const headers = {
