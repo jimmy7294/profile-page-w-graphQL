@@ -13,10 +13,10 @@ import {
 } from "./draw.js";
 
 let username = "";
-async function fetchUserId(jwt, username) {
-  const getUserIdByLoginQuery = `
-    query GetUserIdByLogin($login: String!) {
-      user(where: {login: {_eq: $login}}) {
+async function fetchUserId(jwt, usernameOrEmail) {
+  const getUserIdByLoginOrEmailQuery = `
+    query GetUserIdByLoginOrEmail($login: String!, $email: String!) {
+      user(where: {_or: [{login: {_eq: $login}}, {email: {_eq: $email}}]}) {
         id
       }
     }
@@ -29,9 +29,10 @@ async function fetchUserId(jwt, username) {
   };
 
   const requestBody = {
-    query: getUserIdByLoginQuery,
+    query: getUserIdByLoginOrEmailQuery,
     variables: {
-      login: username,
+      login: usernameOrEmail,
+      email: usernameOrEmail,
     },
   };
 
@@ -47,13 +48,18 @@ async function fetchUserId(jwt, username) {
     }
 
     const respData = await response.json();
-    const userId = respData.data.user[0].id;
-    return userId;
+    if (respData.data && respData.data.user && respData.data.user.length > 0) {
+      const userId = respData.data.user[0].id;
+      return userId;
+    } else {
+      throw new Error("User not found");
+    }
   } catch (error) {
     console.error("Error:", error);
     return null;
   }
 }
+
 
 async function login() {
   const form = document.querySelector("form");
