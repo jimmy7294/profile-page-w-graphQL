@@ -60,7 +60,6 @@ async function fetchUserId(jwt, usernameOrEmail) {
   }
 }
 
-
 async function login() {
   const form = document.querySelector("form");
   form.addEventListener("submit", async (event) => {

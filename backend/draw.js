@@ -1,3 +1,5 @@
+import { addButton } from "./helper.js";
+
 export async function drawPieChart(object) {
   const jsonObj = JSON.parse(object);
 
@@ -37,7 +39,7 @@ export async function drawPieChart(object) {
   )}<br>Done: ${totalUp} kB<br>Received: ${totalDown} kB`;
 }
 
-function createSVGElement(tag, attributes) {
+export function createSVGElement(tag, attributes) {
   const element = document.createElementNS("http://www.w3.org/2000/svg", tag);
   for (const attr in attributes) {
     element.setAttribute(attr, attributes[attr]);
@@ -172,11 +174,6 @@ export function drawLevelProgression(levelProgression) {
 // draw xp gained through go-piscine exercises
 // {"data":{"user":{"transactions":[{"amount":175,"objectId":100155,"object":{"name":"introduction"}},{"amount":500,"objectId":100156,"object":{"name":"make-it-better"}},{"amount":325,"objectId":100158,"object":{"name":"who-are-you"}},{"amount":325,"objectId":100154,"object":{"name":"cl-camp1"}},{"amount":325,"objectId":100159,"object":{"name":"cl-camp2"}},{"amount":325,"objectId":100160,"object":{"name":"cl-camp3"}},{"amount":400,"objectId":100161,"object":{"name":"cl-camp4"}},{"amount":400,"objectId":100162,"object":{"name":"cl-camp5"}},{"amount":400,"objectId":100168,"object":{"name":"cl-camp6"}}, ....
 // y-axis is the name of the exercise, x-axis is the xp gained
-/*     <!-- xpFromGoPiscine Bar Chart -->
-    <div class="xpFromPiscineGoChart">
-      <svg id="xpFromPiscineGoChart" width="200" height="200"></svg>
-      <div id="xpFromPiscineGoDisplay" class="xp-from-piscine-go-display"></div>
-    </div> */
 export function drawXPFromPiscineGo(xpFromPiscineGo) {
   const jsonObj = JSON.parse(xpFromPiscineGo);
   const transactions = jsonObj.data.user.transactions;
@@ -206,6 +203,52 @@ export function drawXPFromPiscineGo(xpFromPiscineGo) {
   chartTitle.textContent = "XP Gained from Go Piscine Exercises";
   svg.appendChild(chartTitle);
 
+  // Store original height for uncollapsing
+  const originalSvgHeight = svgHeight;
+
+  const callback = () => {
+    const slices = document.getElementsByClassName("sliceOfGoPiscine");
+
+    // If the chart is collapsed, uncollapse it
+    if (svg.getAttribute("height") == 60) {
+      svg.setAttribute("height", originalSvgHeight);
+      chartTitle.setAttribute("y", padding - 10);
+      addButton(svg, padding, callback);
+      for (let i = 0; i < slices.length; i++) {
+        const slice = slices[i];
+        slice.style.display = "";
+      }
+    } else {
+      // Otherwise, collapse the chart
+      svg.setAttribute("height", 60);
+      chartTitle.setAttribute("y", 40);
+      addButton(svg, padding, callback);
+      for (let i = 0; i < slices.length; i++) {
+        const slice = slices[i];
+        slice.style.display = "none";
+      }
+    }
+
+    // Adjust the position of the exercise and XP labels
+    const exerciseLabels = document.getElementsByClassName("exerciseLabel");
+    const xpLabels = document.getElementsByClassName("xpLabel");
+
+    for (let i = 0; i < exerciseLabels.length; i++) {
+      const exerciseLabel = exerciseLabels[i];
+      const xpLabel = xpLabels[i];
+
+      if (svg.getAttribute("height") == 60) {
+        exerciseLabel.style.display = "none";
+        xpLabel.style.display = "none";
+      } else {
+        exerciseLabel.style.display = "";
+        xpLabel.style.display = "";
+      }
+    }
+  };
+
+  addButton(svg, padding, callback);
+
   for (let i = 0; i < xp.length; i++) {
     const exercise = exercises[i];
     const xpGained = xp[i];
@@ -222,26 +265,30 @@ export function drawXPFromPiscineGo(xpFromPiscineGo) {
       width: width,
       height: height,
       fill: color,
-      class: "slice",
+      class: "sliceOfGoPiscine",
       "data-total": xpGained,
+      // add borderline to each bar
+      stroke: "black",
     });
     xpSlice.innerHTML = `<title>${title}</title>`;
     svg.appendChild(xpSlice);
 
     const exerciseLabel = createSVGElement("text", {
-      x: x + width + 5,
+      x: x + width + 15,
       y: y + height / 2 + 5,
       "text-anchor": "start",
       "font-size": 12,
+      class: "exerciseLabel",
     });
     exerciseLabel.textContent = exercise;
     svg.appendChild(exerciseLabel);
 
     const xpLabel = createSVGElement("text", {
       x: x + width / 2,
-      y: y - 5,
+      y: y + 20,
       "text-anchor": "middle",
       "font-size": 12,
+      class: "xpLabel",
     });
     xpLabel.textContent = xpGained;
     svg.appendChild(xpLabel);
