@@ -1,15 +1,13 @@
 .chart-container {
-  width: 100%;
-  height: 100%;
   display: flex;
-  justify-content: left;
+  justify-content: center;
   align-items: center;
 }
 
 #auditRatioChart {
   width: 30%;
   height: 30%;
-
+  justify-content: right;
 }
 
 #userBasicInfo {
@@ -39,14 +37,4 @@ path:hover {
 #levelProgressionChart {
   width:100%;
   height: 50%;
-}
-
-#xpFromPiscineGoChart {
-  width: 100%;
-  height:100%;
-}
-
-#xpFromPiscineJSChart {
-  width: 100%;
-  height:100%;
 }

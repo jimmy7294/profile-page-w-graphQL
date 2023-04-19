@@ -41,7 +41,7 @@ export async function fetchXPFromProject(jwt, userID) {
       throw new Error(`HTTP error: ${response.status}`);
     }
     const respData = await response.json();
-    console.log("respData:", respData);
+    // console.log("respData:", respData);
     return JSON.stringify(respData);
   } catch (error) {
     console.error("Error:", error);

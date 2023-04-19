@@ -40,9 +40,10 @@ export function addButton(svg, padding, callback) {
 }
 
 // log the user out of the application
+// Change localStorage to sessionStorage in logout function
 export function logout() {
-  // when the user presses the logout button, remove the jwt and username from local storage
-  localStorage.removeItem("jwt");
-  localStorage.removeItem("username");
+  sessionStorage.removeItem("jwt");
+  sessionStorage.removeItem("username");
   window.location.reload();
 }
+
